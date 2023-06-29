@@ -14,7 +14,7 @@ public class ClientOrder {
     @Column(nullable = false)
     private Integer status;
 
-    @Column(nullable = false, length = 15, precision = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     private Double total;
 
     public Long getId() {
