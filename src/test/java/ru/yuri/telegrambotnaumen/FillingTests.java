@@ -3,10 +3,13 @@ package ru.yuri.telegrambotnaumen;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yuri.telegrambotnaumen.entity.Category;
-import ru.yuri.telegrambotnaumen.entity.Client;
-import ru.yuri.telegrambotnaumen.repository.CategoryRepository;
-import ru.yuri.telegrambotnaumen.repository.ClientRepository;
+
+import ru.yuri.telegrambotnaumen.Service.EntitiesService;
+import ru.yuri.telegrambotnaumen.entity.*;
+import ru.yuri.telegrambotnaumen.repository.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 public class FillingTests {
@@ -15,6 +18,41 @@ public class FillingTests {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ClientOrderRepository clientOrderRepository;
+
+    @Autowired
+    private OrderProductRepository orderProductRepository;
+
+    @Autowired
+    private EntitiesService entitiesService;
+
+    Map<String, Integer> order1 = new HashMap<>();
+
+    {
+        order1.put("Апельсиновый сок", 2);
+        order1.put("Сладкий ролл 1", 3);
+    }
+
+    Map<String, Integer> order2 = new HashMap<>();
+
+    {
+        order2.put("Острый бургер 1", 1);
+        order2.put("Энергетический напиток 1", 2);
+        order2.put("Сладкий ролл 1", 4);
+    }
+
+    Map<String, Integer> order3 = new HashMap<>();
+
+    {
+        order3.put("Апельсиновый сок", 10);
+        order3.put("Энергетический напиток 1", 2);
+        order3.put("Сладкий ролл 1", 14);
+    }
 
     @Test
     public void createTwoClients() {
@@ -98,7 +136,88 @@ public class FillingTests {
         drinks4.setParent(drinks);
         categoryRepository.save(drinks4);
 
+    }
 
+    @Test
+    public void creatingProducts() {
+        var prod1 = new Product();
+        prod1.setName("Апельсиновый сок");
+        prod1.setDescription("drinks");
+        prod1.setPrice(100d);
+        prod1.setCategory(categoryRepository.findByName("Соки"));
+        productRepository.save(prod1);
+
+        var prod2 = new Product();
+        prod2.setName("Энергетический напиток 1");
+        prod2.setDescription("drinks");
+        prod2.setPrice(150d);
+        prod2.setCategory(categoryRepository.findByName("Энергетические напитки"));
+        productRepository.save(prod2);
+
+        var prod3 = new Product();
+        prod3.setName("Сладкий ролл 1");
+        prod3.setDescription("слааадко");
+        prod3.setPrice(200d);
+        prod3.setCategory(categoryRepository.findByName("Сладкие роллы"));
+        productRepository.save(prod3);
+
+        var prod4 = new Product();
+        prod4.setName("Острый бургер 1");
+        prod4.setDescription("оооооссстроооо");
+        prod4.setPrice(300d);
+        prod4.setCategory(categoryRepository.findByName("Острые бургеры"));
+        productRepository.save(prod4);
+    }
+
+    @Test
+    public void creatingClientOrders() {
+        var clientOrder1 = new ClientOrder();
+        clientOrder1.setClient(entitiesService.getClientByName("fullName1"));
+        clientOrder1.setStatus(1);
+        double sum = 0;
+        for (Map.Entry<String, Integer> order : order1.entrySet()) {
+            sum += order.getValue() * entitiesService.getProductByName(order.getKey()).getPrice();
+        }
+        clientOrder1.setTotal(sum);
+        clientOrderRepository.save(clientOrder1);
+
+        var clientOrder2 = new ClientOrder();
+        clientOrder2.setClient(entitiesService.getClientByName("fullName2"));
+        clientOrder2.setStatus(2);
+        sum = 0;
+        for (Map.Entry<String, Integer> order : order2.entrySet()) {
+            sum += order.getValue() * entitiesService.getProductByName(order.getKey()).getPrice();
+        }
+        clientOrder2.setTotal(sum);
+        clientOrderRepository.save(clientOrder2);
+
+        var clientOrder3 = new ClientOrder();
+        clientOrder3.setClient(entitiesService.getClientByName("fullName1"));
+        clientOrder3.setStatus(1);
+        sum = 0;
+        for (Map.Entry<String, Integer> order : order3.entrySet()) {
+            sum += order.getValue() * entitiesService.getProductByName(order.getKey()).getPrice();
+        }
+        clientOrder3.setTotal(sum);
+        clientOrderRepository.save(clientOrder3);
+    }
+
+    @Test
+    public void creatingOrderProducts() {
+        orderToOrderProd(order1, 1l);
+        orderToOrderProd(order2, 2l);
+        orderToOrderProd(order3, 3l);
+    }
+
+    private void orderToOrderProd(Map<String, Integer> order, Long clientOrderId) {
+        var clientOrder = clientOrderRepository.findById(clientOrderId).orElseThrow();
+        for (Map.Entry<String, Integer> orderMap : order.entrySet()) {
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setClientOrder(clientOrder);
+            orderProduct.setProduct(entitiesService.getProductByName(orderMap.getKey()));
+            orderProduct.setCountProduct(orderMap.getValue());
+            orderProductRepository.save(orderProduct);
+        }
     }
 }
 

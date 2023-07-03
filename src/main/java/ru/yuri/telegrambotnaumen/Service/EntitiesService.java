@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * Сервис для работы с сущностями телеграмм-бота
  */
+
 public interface EntitiesService
 {
     /**
