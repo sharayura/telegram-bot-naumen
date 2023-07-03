@@ -28,4 +28,9 @@ public class ApplicationRestController {
     public ResponseEntity<List<Product>> getTopPopularProducts(@RequestParam Integer top) {
         return ResponseEntity.ok(entitiesService.getTopPopularProducts(top));
     }
+
+    @GetMapping(value = "/rest/products", params = "name")
+    public ResponseEntity<Product> getProductByName(@RequestParam String name) {
+        return ResponseEntity.ok(entitiesService.getProductByName(name));
+    }
 }
