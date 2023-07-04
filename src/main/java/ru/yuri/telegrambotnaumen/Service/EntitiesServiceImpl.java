@@ -9,6 +9,7 @@ import ru.yuri.telegrambotnaumen.entity.Product;
 import ru.yuri.telegrambotnaumen.repository.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -37,7 +38,7 @@ public class EntitiesServiceImpl implements EntitiesService{
 
     @Override
     public List<ClientOrder> getOrdersByStatus(Integer status) {
-        return null;
+        return clientOrderRepository.findAllByStatus(status);
     }
 
     @Override
@@ -49,17 +50,17 @@ public class EntitiesServiceImpl implements EntitiesService{
 
     @Override
     public List<Product> getProductsByCategoryId(Long id) {
-        return null;
+        return productRepository.findProductsByCategoryId(id);
     }
 
     @Override
     public List<ClientOrder> getClientOrdersByName(String name) {
-        return null;
+        return clientOrderRepository.findAllByClientFullName(name);
     }
 
     @Override
     public List<Product> getProductsByClientId(Long id) {
-        return null;
+        return productRepository.getProductByClientId(id);
     }
 
     @Override
