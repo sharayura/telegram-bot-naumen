@@ -6,4 +6,5 @@ import ru.yuri.telegrambotnaumen.entity.OrderProduct;
 
 @RepositoryRestResource(collectionResourceRel = "orderProducts", path = "orderProducts")
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
+
 }

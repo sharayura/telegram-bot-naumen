@@ -1,5 +1,7 @@
 package ru.yuri.telegrambotnaumen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,6 +10,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     private Category category;
 
@@ -17,7 +20,7 @@ public class Product {
     @Column(nullable = false, length = 400)
     private String description;
 
-    @Column(nullable = false, length = 15, precision = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     private Double price;
 
     public Long getId() {

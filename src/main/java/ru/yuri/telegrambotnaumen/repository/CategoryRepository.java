@@ -6,4 +6,5 @@ import ru.yuri.telegrambotnaumen.entity.Category;
 
 @RepositoryRestResource(collectionResourceRel = "categories", path ="categories")
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+    Category findByName(String name);
 }
